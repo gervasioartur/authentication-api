@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://java.sun.com/jsf/html">
+<html xmlns:h="http://java.sun.com/jsf/html"
+      xmlns="http://www.w3.org/1999/xhtml">
 
 <h:head>
-	<title>Hello word</title>
+    <title>Hello word</title>
 </h:head>
 <h:body>
-	<h:form>
-		<h1>Olá Mundo!</h1>
-		<h:inputText id="name" value="#{pessoaBean.name}" />
-		<br /><br />
-		<h:inputText id="sunName" value="#{pessoaBean.sunName}" />
-		<br/> <br/>
-		<h:outputFormat value="#{pessoaBean.completeName}" />
-		<br/> <br/>
-		<h:commandButton value="enviar" action="#{pessoaBean.getCompleteName}"/>
-	</h:form>
+    <h:form>
+        <h1>Olá Mundo!</h1>
+        <h:inputText id="name" value="#{pessoaBean.name}"/>
+        <br/><br/>
+        <h:inputText id="sunName" value="#{pessoaBean.sunName}"/>
+        <br/> <br/>
+        <h:outputFormat value="#{pessoaBean.completeName}"/>
+        <br/> <br/>
+        <h:commandButton value="enviar" action="#{pessoaBean.getCompleteName}"/>
+    </h:form>
 </h:body>
 </html>
