@@ -1,7 +1,7 @@
 package domain.contracts.repos;
 
-import domain.entities.ouputs.LoadByEmailOutput;
+import domain.entities.ouputs.UserOutput;
 
 public interface LoadUserByEmail {
-    LoadByEmailOutput loadByEmail(String email);
+    UserOutput loadByEmail(String email);
 }

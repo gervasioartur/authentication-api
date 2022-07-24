@@ -1,17 +1,20 @@
 package domain.entities.ouputs;
 
-public class LoadByEmailOutput {
+public class UserOutput {
     private String id;
     private String name;
     private String email;
 
-    public LoadByEmailOutput(String name, String email) {
+    public UserOutput() {
+    }
+
+    public UserOutput(String name, String email) {
         super();
         this.name = name;
         this.email = email;
     }
 
-    public LoadByEmailOutput(String id, String name, String email) {
+    public UserOutput(String id, String name, String email) {
         super();
         this.id = id;
         this.name = name;
