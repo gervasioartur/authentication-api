@@ -23,7 +23,8 @@ public class SingUp {
     <T> T singUp(String name, String email, String password) {
         UserOutput result = this.loadByEmailRepo.loadByEmail(email);
         if (result == null) {
-            this.encrypter.encrypt(password);
+            String hashedPassword = this.encrypter.encrypt(password);
+            this.saveUserRepo.save(name, email, hashedPassword);
             return null;
         }
         return (T) new EmailInUserError();

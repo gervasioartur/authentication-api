@@ -5,7 +5,6 @@ import domain.contracts.repos.LoadUserByEmail;
 import domain.entities.ouputs.UserOutput;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import static org.mockito.Mockito.verify;
@@ -30,11 +29,13 @@ public class SingUpTest {
         password = "any_password";
         loadUserByEmailRepo = Mockito.mock(LoadUserByEmail.class);
         encrypter = Mockito.mock(Encrypter.class);
+        saveUserRepo = Mockito.mock(SaveUserRepo.class);
     }
 
     @BeforeEach
     public void init() {
         when(loadUserByEmailRepo.loadByEmail(email)).thenReturn(null);
+        when(encrypter.encrypt(password)).thenReturn("any_hashed_password");
         sut = new SingUp(loadUserByEmailRepo, encrypter, saveUserRepo);
         sut.singUp(name, email, password);
     }
@@ -57,6 +58,12 @@ public class SingUpTest {
     @DisplayName("Should call encrypt with correct input")
     void SingUpCallsEncryptWithCorrectInput() {
         verify(encrypter, Mockito.atLeastOnce()).encrypt(password);
+    }
+
+    @Test
+    @DisplayName("Should call save with correct input")
+    void SingUpCallsSaveUserWithCorrectInput() {
+        verify(saveUserRepo, Mockito.atLeastOnce()).save(name, email, "any_hashed_password");
     }
 
 }
