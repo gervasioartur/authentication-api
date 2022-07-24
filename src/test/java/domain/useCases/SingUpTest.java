@@ -2,9 +2,13 @@ package domain.useCases;
 
 import domain.contracts.gateways.Encrypter;
 import domain.contracts.repos.LoadUserByEmail;
+import domain.entities.errors.EmailInUserError;
+import domain.entities.ouputs.UserOutput;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.mockito.Mockito;
+import org.mockito.internal.stubbing.BaseStubbing;
+import org.springframework.util.Assert;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -16,7 +20,7 @@ public class SingUpTest {
     private String name;
     private String email;
     private String password;
-    private LoadUserByEmail loadUserByEmail;
+    private LoadUserByEmail loadUserByEmailRepo;
     private Encrypter encrypter;
     private SaveUserRepo saveUserRepo;
 
@@ -26,34 +30,26 @@ public class SingUpTest {
         name = "any_name";
         email = "any_email";
         password = "any_password";
-        loadUserByEmail = Mockito.mock(LoadUserByEmail.class);
-        encrypter = Mockito.mock(Encrypter.class);
-        saveUserRepo = Mockito.mock(SaveUserRepo.class);
+        loadUserByEmailRepo = Mockito.mock(LoadUserByEmail.class);
     }
 
     @BeforeEach
     public void init() {
-        when(loadUserByEmail.loadByEmail(email)).thenReturn(null);
-        when(encrypter.encrypt(password)).thenReturn("any_hashed_password");
-        sut = new SingUp(loadUserByEmail, encrypter, saveUserRepo);
+        sut = new SingUp(loadUserByEmailRepo, encrypter, saveUserRepo);
         sut.singUp(name, email, password);
     }
 
     @Test
     @DisplayName("Should call loadByEmail with correct input")
     void singUpCallsLoadByEmailWithCorrectInput() {
-        verify(loadUserByEmail, Mockito.atLeastOnce()).loadByEmail(email);
+        verify(loadUserByEmailRepo, Mockito.atLeastOnce()).loadByEmail(email);
+    }
+    @Test
+    @DisplayName("Should return email in use Error if email is already taken")
+    void singUpReturnEmailInUseError() {
+     when(loadUserByEmailRepo.loadByEmail(email)).thenReturn(new UserOutput(id, name,email));
+        Error result = sut.singUp(name,email, password);
+        Assertions.assertEquals("This email is already in use, please user other email or try to login.", result.getMessage());
     }
 
-    @Test
-    @DisplayName("Should call encrypt with correct input")
-    void singUpCallsEncrypterWithCorrectInput() {
-        verify(encrypter, Mockito.atLeastOnce()).encrypt(password);
-    }
-
-    @Test
-    @DisplayName("Should call save with correct input")
-    void singUpCallsSaveUserInput() {
-        verify(saveUserRepo, Mockito.atLeastOnce()).save(name, email, "any_hashed_password");
-    }
 }

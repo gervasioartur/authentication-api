@@ -4,6 +4,7 @@ import domain.contracts.gateways.Encrypter;
 import domain.contracts.repos.LoadUserByEmail;
 import domain.entities.errors.EmailInUserError;
 import domain.entities.ouputs.UserOutput;
+import org.springframework.security.core.userdetails.User;
 
 interface SaveUserRepo {
     UserOutput save(String name, String email, String Password);
@@ -20,16 +21,13 @@ public class SingUp {
         this.saveUserRepo = saveUserRepo;
     }
 
-    @SuppressWarnings("unchecked")
     <T> T singUp(String name, String email, String password) {
-        UserOutput result = this.loadByEmailRepo.loadByEmail(email);
-        if (result == null) {
-            String hashedPassword = (String) this.encrypter.encrypt(password);
-            UserOutput user = new UserOutput();
-            this.saveUserRepo.save(name, email, hashedPassword);
-            return (T) user;
-        }
-        return (T) new EmailInUserError();
+         UserOutput result =  this.loadByEmailRepo.loadByEmail(email);
+          if (result == null){
+              return null;
+          }else {
+              return (T) new EmailInUserError();
+          }
     }
 
 }
