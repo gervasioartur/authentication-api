@@ -35,16 +35,19 @@ public class SingUpTest {
     @BeforeEach
     public void init() {
         when(loadUserByEmail.loadByEmail(email)).thenReturn(null);
-        when(encrypter.encrypt(password)).thenReturn("any_hashed_password");
-        when(saveUserRepo.save(name, email, password)).thenReturn(new UserOutput(id, name, email));
         sut = new SingUp(loadUserByEmail, encrypter, saveUserRepo);
+        sut.singUp(name, email, password);
     }
 
     @Test
     @DisplayName("Should call loadByEmail with correct input")
     void singUpCallsLoadByEmailWithCorrectInput() {
-        sut.singUp(name, email, password);
-        verify(loadUserByEmail, Mockito.times(1)).loadByEmail(email);
+        verify(loadUserByEmail, Mockito.atLeastOnce()).loadByEmail(email);
     }
 
+    @Test
+    @DisplayName("Should call encrypt with correct input")
+    void singUpCallsEncrypterWithCorrectInput() {
+        verify(encrypter, Mockito.atLeastOnce()).encrypt(password);
+    }
 }
