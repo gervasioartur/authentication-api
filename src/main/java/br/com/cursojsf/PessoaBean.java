@@ -6,6 +6,8 @@ import javax.faces.bean.ManagedBean;
 public class PessoaBean {
 	private String name;
 	private String sunName;
+	private String completeName;
+	
 
 	public String getName() {
 		return name;
@@ -22,4 +24,14 @@ public class PessoaBean {
 	public void setSunName(String sunName) {
 		this.sunName = sunName;
 	}
+
+	public String getCompleteName() {
+		this.setCompleteName();
+		return completeName;
+	}
+
+	public void setCompleteName() {
+		this.completeName = this.name + " " + this.sunName;
+	}
+
 }
