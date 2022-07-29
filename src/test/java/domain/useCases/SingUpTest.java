@@ -6,10 +6,10 @@ import domain.contracts.repos.LoadUserByEmail;
 import domain.contracts.repos.SaveUser;
 import domain.entities.ouputs.UserOutput;
 import org.junit.jupiter.api.*;
-
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SingUpTest {
@@ -39,7 +39,8 @@ public class SingUpTest {
     public void init() {
         when(loadUserByEmailRepo.loadByEmail(email)).thenReturn(null);
         when(encrypter.encrypt(password)).thenReturn("any_hashed_password");
-        when(saveUserRepo.save(name, email,"any_hashed_password")).thenReturn(new UserOutput(id, name, email));
+        when(saveUserRepo.save(name, email, "any_hashed_password")).thenReturn(new UserOutput(id, name, email));
+        when(tokenGenerator.generate(id)).thenReturn("any_access_token");
         sut = new SingUp(loadUserByEmailRepo, encrypter, saveUserRepo, tokenGenerator);
         sut.singUp(name, email, password);
     }
@@ -74,5 +75,12 @@ public class SingUpTest {
     @DisplayName("Should call Token generator with correct input")
     void SingUpCallsTokenGeneratorWithCorrectInput() {
         verify(tokenGenerator, Mockito.atLeastOnce()).generate(id);
+    }
+
+    @Test
+    @DisplayName("Should return access token on sing up success")
+    void ShouldReturnAccessTokenOnSingUpSuccess() {
+        String accessToken = sut.singUp(name,email,password);
+        Assertions.assertEquals("any_access_token", accessToken);
     }
 }
