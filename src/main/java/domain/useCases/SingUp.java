@@ -26,9 +26,8 @@ public class SingUp {
         if (result == null) {
             String hashedPassword = this.encrypter.encrypt(password);
             UserOutput user = this.saveUserRepo.save(name, email, hashedPassword);
-            System.out.println(user.getId());
             if (user != null) {
-                this.tokenGenerator.generate(user.getId());
+                return (T) this.tokenGenerator.generate(user.getId());
             }
         }
         return (T) new EmailInUserError();
