@@ -1,16 +1,17 @@
 package domain.useCases;
 
 import domain.contracts.gateways.Encrypter;
+import domain.contracts.gateways.TokenGenerator;
 import domain.contracts.repos.LoadUserByEmail;
+import domain.contracts.repos.SaveUser;
 import domain.entities.ouputs.UserOutput;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
+
 import org.mockito.Mockito;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@TestInstance(Lifecycle.PER_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SingUpTest {
     private SingUp sut;
     private String id;
@@ -19,7 +20,8 @@ public class SingUpTest {
     private String password;
     private LoadUserByEmail loadUserByEmailRepo;
     private Encrypter encrypter;
-    private SaveUserRepo saveUserRepo;
+    private SaveUser saveUserRepo;
+    private TokenGenerator tokenGenerator;
 
     @BeforeAll
     public void setup() {
@@ -29,14 +31,16 @@ public class SingUpTest {
         password = "any_password";
         loadUserByEmailRepo = Mockito.mock(LoadUserByEmail.class);
         encrypter = Mockito.mock(Encrypter.class);
-        saveUserRepo = Mockito.mock(SaveUserRepo.class);
+        saveUserRepo = Mockito.mock(SaveUser.class);
+        tokenGenerator = Mockito.mock(TokenGenerator.class);
     }
 
     @BeforeEach
     public void init() {
         when(loadUserByEmailRepo.loadByEmail(email)).thenReturn(null);
         when(encrypter.encrypt(password)).thenReturn("any_hashed_password");
-        sut = new SingUp(loadUserByEmailRepo, encrypter, saveUserRepo);
+        when(saveUserRepo.save(name, email,"any_hashed_password")).thenReturn(new UserOutput(id, name, email));
+        sut = new SingUp(loadUserByEmailRepo, encrypter, saveUserRepo, tokenGenerator);
         sut.singUp(name, email, password);
     }
 
@@ -66,4 +70,9 @@ public class SingUpTest {
         verify(saveUserRepo, Mockito.atLeastOnce()).save(name, email, "any_hashed_password");
     }
 
+    @Test
+    @DisplayName("Should call Token generator with correct input")
+    void SingUpCallsTokenGeneratorWithCorrectInput() {
+        verify(tokenGenerator, Mockito.atLeastOnce()).generate(id);
+    }
 }
